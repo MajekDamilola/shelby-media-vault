@@ -11,6 +11,7 @@
   "dependencies": {
     "@aptos-labs/aptos-client": "^3.0.1",
     "@aptos-labs/ts-sdk": "^5.2.1",
+    "@aptos-labs/wallet-adapter-react": "^8.3.1",
     "@shelby-protocol/react": "^1.0.3",
     "@shelby-protocol/sdk": "^0.2.3",
     "@shelby-protocol/solana-kit": "^0.2.6",
@@ -19,10 +20,13 @@
     "@solana/wallet-adapter-wallets": "^0.19.37",
     "@solana/web3.js": "^1.98.4",
     "@tanstack/react-query": "^5.90.21",
+    "@telegram-apps/bridge": "^2.11.0",
+    "buffer": "^6.0.3",
     "got": "^14.6.6",
     "next": "16.1.6",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
