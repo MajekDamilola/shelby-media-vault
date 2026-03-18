@@ -1,3 +1,27 @@
+:root {
+  --shelby-purple: #7C3AED;
+  --shelby-blue: #3B82F6;
+  --shelby-cyan: #22D3EE;
+}
+
+.shelby-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--shelby-purple),
+    var(--shelby-blue),
+    var(--shelby-cyan)
+  );
+}
+
+.shelby-text-gradient {
+  background: linear-gradient(
+    90deg,
+    var(--shelby-purple),
+    var(--shelby-blue)
+  );
+  -webkit-background-clip: text;
+  color: transparent;
+}
 @import "tailwindcss";
 
 :root {
