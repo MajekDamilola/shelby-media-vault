@@ -1,105 +1,148 @@
 # ◈ Shelby Media Vault
 
-A decentralized media storage and management tool built on [Shelby](https://shelby.xyz). Upload, organize, preview, and share media files — images, video, audio, and documents — directly on Shelby's decentralized storage network.
+> Decentralized media storage and management powered by [Shelby Network](https://shelby.xyz)
+
+Shelby Media Vault is a creator-focused web application that lets users upload, organize, preview, and share media files — images, video, audio, and documents — directly on Shelby's hot storage network. No centralized servers. No middlemen. Just your wallet, your files, and Shelby.
+
+---
+
+## What It Does
+
+**Upload** — Drag and drop any media file into your vault. Choose how long you want it stored (1–365 days). The file is uploaded directly to Shelby's decentralized network and a merkle root is returned as proof of integrity.
+
+**Organize** — Browse your vault with a personal dashboard. Filter by file type (images, video, audio, docs), search by name, and see your total storage usage at a glance.
+
+**Preview** — View images, play video, and listen to audio directly in the browser without downloading. Full in-browser media player for every file type.
+
+**Share** — Every file gets a public shareable URL that anyone can access and download — no account needed to view.
+
+---
+
+## Why Shelby
+
+Most media-heavy applications rely on centralized cloud storage (AWS S3, Google Cloud) which creates single points of failure, vendor lock-in, and data ownership concerns for creators.
+
+Shelby offers hot decentralized storage — fast enough for real-time media retrieval, reliable enough for production applications, and Web3-native so users truly own their data.
+
+This project demonstrates Shelby as a practical backend for creator tools, content platforms, and media-based Web3 applications.
+
+---
 
 ## Features
 
-- **Wallet-based access** — connect with your Aptos devnet account
-- **Drag & drop uploads** — upload any media file to Shelby with configurable storage duration
-- **Personal vault dashboard** — browse all your stored files with search and filter
-- **Media preview** — in-browser preview for images, video, and audio
-- **Shareable links** — generate public share URLs for any file
-- **Blob integrity** — merkle root displayed for each upload
+- 🔐 **Wallet-based access** — connect with your Aptos account, your keys control your vault
+- ⬆️ **Drag & drop uploads** — upload images, video, audio, and PDF to Shelby with configurable storage duration
+- 📁 **Personal vault dashboard** — browse all stored files with search, filter by type, and storage stats
+- 👁 **In-browser media preview** — images, video player, audio player built in
+- 🔗 **Shareable links** — generate public URLs for any file instantly
+- ✅ **Blob integrity** — merkle root displayed for every upload
+- 🔔 **Toast notifications** — real-time feedback on uploads, errors, and actions
+- ⚡ **Hot storage** — files retrieved via Shelby's fast read infrastructure
+
+---
 
 ## Tech Stack
 
-- **Next.js 16** with App Router
-- **TypeScript** + **TailwindCSS v4**
-- **@shelby-protocol/sdk** — Shelby storage client
-- **@aptos-labs/ts-sdk** — Aptos account/transaction signing
-- **@tanstack/react-query** — data fetching
+| Layer | Technology |
+|---|---|
+| Frontend | Next.js 16, React 19, TypeScript |
+| Styling | TailwindCSS v4, custom design system |
+| Storage | `@shelby-protocol/sdk` |
+| Wallet | `@aptos-labs/wallet-adapter-react` (Petra, Nightly, Martian) |
+| Network | Aptos Testnet via Shelby |
+| Fonts | Space Grotesk, JetBrains Mono |
+
+---
+
+## How Shelby Is Used
+
+```typescript
+// Upload a file to Shelby
+const result = await client.upload({
+  blobName: `${accountAddress}/${uuid}/${fileName}`,
+  data: buffer,
+  storageDuration: days * 24 * 60 * 60,
+});
+
+// List all blobs for an account
+const blobs = await client.listBlobs({ account: accountAddress });
+
+// Download / stream a blob
+const { data, mimeType } = await client.download({ blobName });
+```
+
+See `lib/shelby.ts` and `app/api/` for full integration.
+
+---
 
 ## Project Structure
 
 ```
 app/
-  page.tsx              ← Landing + wallet connect
-  layout.tsx            ← Root layout with providers
-  globals.css           ← Design system & CSS variables
-  vault/
-    layout.tsx          ← Protected vault layout with Nav
-    page.tsx            ← Main dashboard (search, filter, grid)
-  api/
-    upload/route.ts     ← POST: upload file to Shelby
-    files/route.ts      ← GET: list blobs for an account
-    download/route.ts   ← GET: stream blob from Shelby
-  share/[blobName]/
-    page.tsx            ← Public share page
+  page.tsx               ← Landing page with wallet connect
+  vault/page.tsx         ← Dashboard (search, filter, file grid)
+  api/upload/route.ts    ← Upload file to Shelby
+  api/files/route.ts     ← List blobs for account
+  api/download/route.ts  ← Stream blob from Shelby
+  share/[blobName]/      ← Public share page
 components/
-  Nav.tsx               ← Navigation bar
-  UploadZone.tsx        ← Drag & drop upload modal
-  FileGrid.tsx          ← File card grid
-  FilePreviewModal.tsx  ← Full-screen file preview
+  Nav.tsx                ← Navigation
+  UploadZone.tsx         ← Drag & drop upload modal
+  FileGrid.tsx           ← File card grid
+  FilePreviewModal.tsx   ← In-browser media preview
+  WalletSelector.tsx     ← Wallet connect modal
+  Toast.tsx              ← Notification system
 hooks/
-  useWallet.tsx         ← Wallet context (address, key)
-  useVault.ts           ← Vault file state & upload logic
+  useVault.ts            ← Vault state & upload logic
 lib/
-  shelby.ts             ← ShelbyClient factory
-types/
-  vault.ts              ← VaultFile types & helpers
+  shelby.ts              ← ShelbyClient factory
 ```
 
-## Setup
+---
 
-### Prerequisites
-
-- Node.js v22+
-- Shelby CLI installed — follow the [Shelby CLI Getting Started](https://docs.shelby.xyz/tools/cli)
-- Aptos devnet account funded via [ShelbyUSD faucet](https://docs.shelby.xyz/apis/faucet/shelbyusd)
-
-### Installation
+## Local Setup
 
 ```bash
-# Clone / enter the project
-cd shelby-vault
+# 1. Clone the repo
+git clone https://github.com/MajekDamilola/shelby-media-vault.git
+cd shelby-media-vault
 
-# Install dependencies
-npm install
+# 2. Install dependencies
+npm install --legacy-peer-deps
 
-# Copy environment config
+# 3. Set up environment
 cp .env.example .env.local
 # Edit .env.local with your SHELBY_RPC_NODE
 
-# Run development server
+# 4. Run development server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) and connect with your Aptos devnet address and private key.
+Open [http://localhost:3000](http://localhost:3000) and connect with your Aptos testnet wallet (Petra recommended).
 
-> ⚠️ **Never use mainnet private keys** in this app during development. Use Aptos devnet credentials only.
-
-### Getting Testnet Funds
-
-After generating your devnet account with the Shelby CLI (`npm run config` in shelby-quickstart):
-
-1. Visit the [ShelbyUSD faucet](https://docs.shelby.xyz/apis/faucet/shelbyusd)
-2. Visit the [Aptos faucet](https://docs.shelby.xyz/apis/faucet/aptos)
-3. Paste your account address and fund it
+---
 
 ## Roadmap
 
-- [ ] Aptos wallet adapter integration (Petra, Martian) — replace raw private key input
-- [ ] Folder/collection organization
+- [x] Wallet-based vault access
+- [x] Media upload to Shelby network
+- [x] Personal vault dashboard
+- [x] In-browser media preview
+- [x] Shareable public links
+- [x] Blob integrity proofs (merkle root)
+- [ ] Petra / Martian wallet adapter (in progress)
+- [ ] Folder and collection organization
 - [ ] File tagging and metadata
 - [ ] Bulk upload
-- [ ] Storage expiry tracking
-- [ ] IPFS gateway fallback
+- [ ] Storage expiry tracking and renewal
+- [ ] Mobile responsive layout
 
-## Built With Shelby
+---
 
-This project demonstrates Shelby as a backend for media-heavy applications:
-- **Upload** — `client.upload({ blobName, data, storageDuration })`
-- **List** — `client.listBlobs({ account })`
-- **Download** — `client.download({ blobName })`
+## About
 
-See `lib/shelby.ts` and `app/api/` routes for integration details.
+Built by [@MajekDamilola](https://github.com/MajekDamilola) as part of the Shelby Network early access program.
+
+This project aims to showcase Shelby as a viable storage backend for real-world creator tools and decentralized media platforms.
+
+> *"Built to hold, made to move."* — Shelby Network
