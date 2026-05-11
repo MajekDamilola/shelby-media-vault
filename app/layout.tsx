@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <AptosWalletAdapterProvider
             autoConnect={true}
             dappConfig={{ network: Network.TESTNET }}
-            optInWallets={["Petra", "Nightly", "Pontem Wallet", "Martian"]}
+            optInWallets={["Petra", "Nightly"]}
             onError={(error) => console.error("Wallet error:", error)}
           >
             <ToastProvider>
