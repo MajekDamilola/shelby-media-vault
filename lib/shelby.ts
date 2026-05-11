@@ -1,23 +1,23 @@
-import { ShelbyClient } from "@shelby-protocol/sdk";
+// Shelby SDK stub — replace with real implementation once early access is granted
+// import { ShelbyClient } from "@shelby-protocol/sdk";
 
-let client: ShelbyClient | null = null;
-
-export function getShelbyClient(): ShelbyClient {
-  if (!client) {
-    client = new ShelbyClient({
-      rpcNode: process.env.SHELBY_RPC_NODE || "https://rpc.shelby.xyz",
-      network: (process.env.APTOS_NETWORK as "devnet" | "mainnet") || "devnet",
-    });
-  }
-  return client;
+export function getShelbyClient() {
+  return {
+    upload: async ({ blobName, data, storageDuration }: { blobName: string; data: Buffer; storageDuration: number }) => {
+      console.log("Shelby upload stub:", blobName, storageDuration);
+      return { merkleRoot: "0x" + Math.random().toString(16).slice(2) };
+    },
+    listBlobs: async ({ account }: { account: string }) => {
+      console.log("Shelby listBlobs stub:", account);
+      return [];
+    },
+    download: async ({ blobName }: { blobName: string }) => {
+      console.log("Shelby download stub:", blobName);
+      return { data: Buffer.from(""), mimeType: "application/octet-stream" };
+    },
+  };
 }
 
-export function getShelbyClientForAccount(
-  privateKey: string
-): ShelbyClient {
-  return new ShelbyClient({
-    rpcNode: process.env.SHELBY_RPC_NODE || "https://rpc.shelby.xyz",
-    network: (process.env.APTOS_NETWORK as "devnet" | "mainnet") || "devnet",
-    privateKey,
-  });
+export function getShelbyClientForAccount(_privateKey: string) {
+  return getShelbyClient();
 }
