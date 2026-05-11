@@ -1,10 +1,11 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { VaultFile, UploadProgress } from "@/types/vault";
-import { useWallet } from "./useWallet";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 
 export function useVault() {
-  const { address, privateKey, isConnected } = useWallet();
+  const { account, connected } = useWallet();
+  const address = account?.address?.toString();
   const [files, setFiles] = useState<VaultFile[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -12,8 +13,7 @@ export function useVault() {
 
   const fetchFiles = useCallback(async () => {
     if (!address) return;
-    setLoading(true);
-    setError(null);
+    setLoading(true); setError(null);
     try {
       const res = await fetch(`/api/files?account=${address}`);
       if (!res.ok) throw new Error(await res.text());
@@ -27,35 +27,25 @@ export function useVault() {
   }, [address]);
 
   useEffect(() => {
-    if (isConnected && address) fetchFiles();
+    if (connected && address) fetchFiles();
     else setFiles([]);
-  }, [isConnected, address, fetchFiles]);
+  }, [connected, address, fetchFiles]);
 
   const uploadFile = useCallback(async (
-    file: File,
-    storageDays: number = 30,
+    file: File, storageDays = 30,
     onSuccess?: (f: VaultFile) => void,
     onError?: (msg: string) => void,
   ) => {
-    if (!address || !privateKey) {
-      onError?.("Wallet not connected");
-      return null;
-    }
+    if (!address) { onError?.("Wallet not connected"); return null; }
     setUploadProgress({ status: "uploading", progress: 10, message: "Preparing upload…" });
     try {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("accountAddress", address);
-      formData.append("privateKey", privateKey);
       formData.append("storageDays", String(storageDays));
-
       setUploadProgress({ status: "uploading", progress: 40, message: "Uploading to Shelby network…" });
-
       const res = await fetch("/api/upload", { method: "POST", body: formData });
-      if (!res.ok) {
-        const { error: errMsg } = await res.json();
-        throw new Error(errMsg || "Upload failed");
-      }
+      if (!res.ok) { const { error: e } = await res.json(); throw new Error(e || "Upload failed"); }
       const { file: newFile } = await res.json();
       setUploadProgress({ status: "success", progress: 100, message: "Stored on Shelby!", file: newFile });
       setFiles(prev => [newFile, ...prev]);
@@ -67,11 +57,8 @@ export function useVault() {
       onError?.(msg);
       return null;
     }
-  }, [address, privateKey]);
+  }, [address]);
 
-  const resetUpload = useCallback(() => {
-    setUploadProgress({ status: "idle", progress: 0 });
-  }, []);
-
+  const resetUpload = useCallback(() => setUploadProgress({ status: "idle", progress: 0 }), []);
   return { files, loading, error, uploadProgress, uploadFile, resetUpload, refetch: fetchFiles };
 }

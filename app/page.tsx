@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 
 export default function HomePage() {
-  const { connected, wallets, connect } = useWallet();
+  const { connected, wallets = [], connect } = useWallet();
   const router = useRouter();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [mounted, setMounted] = useState(false);
